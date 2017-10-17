@@ -1,0 +1,575 @@
+﻿
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>THREEjs TEST</title>
+
+    <link href="./bootstrap.css" type="text/css" rel="stylesheet">
+    <link href="./font-awesome(1).css" type="text/css" rel="stylesheet">
+    <script src="./jquery-1.10.2.min.js.pobrane" type="text/javascript"></script>
+    <script src="./bootstrap.min.js.pobrane"></script>
+    <script src="js/three.js"></script>
+    <script src="js/controls/orbitcontrols2.js"></script>
+    <script src="js/loaders/ColladaLoader.js"></script>
+
+
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: hidden;
+            color: #555;
+        }
+
+        .space10 {
+            height: 10px;
+            width: 100%;
+            clear: both;
+        }
+
+        #content, #webgl-container {
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        #parameter-list-container {
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            border-right: 1px #ddd solid;
+            -webkit-box-shadow: 1px 0 20px 0 #ddd;
+            box-shadow: 1px 0 20px 0 #ddd;
+        }
+
+        .nopadding {
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        .center {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+        }
+
+        .webgl-control-panel {
+            z-index: 9999;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+            .webgl-control-panel i {
+                color: #ff0000 !important;
+                font-size: 1.6em;
+                cursor: pointer;
+                padding: 10px 10px 10px 5px;
+            }
+
+        label {
+            font-weight: 100;
+        }
+
+        .unity-box {
+            min-width: 100%;
+            min-height: 100%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+        }
+
+        .progress-bar-bim {
+            background-color: #00aeef;
+        }
+
+        .btn-primary {
+            background-color: #00aeef;
+            border-color: #00aeef;
+        }
+
+            .btn-primary:hover,
+            .btn-primary:focus,
+            .btn-primary:active {
+                background-color: #0099e6;
+                border-color: #0099e6;
+            }
+
+        .btn-inverted,
+        .btn-inverted:hover,
+        .btn-inverted:focus,
+        .btn-inverted:active {
+            background-color: #333 !important;
+            border-color: #111 !important;
+            color: #fff;
+        }
+
+            .btn-inverted,
+            .btn-inverted:hover,
+            .btn-inverted:active,
+            .btn-inverted:focus {
+                background-color: #333 !important;
+                border-color: #111 !important;
+                color: #fff;
+            }
+
+        .poweredby {
+            background: #f9f9f9 none repeat scroll 0 0;
+            bottom: 0;
+            left: 0;
+            padding: 10px;
+            position: absolute;
+            width: 200px;
+        }
+    </style>
+
+</head>
+<body>
+
+
+    <div id="webgl-control-panel" class="webgl-control-panel hidden" style="display: block;">
+        <i id="reset" class="fa fa-fw fa-refresh"></i>
+        <!-- <i id="pause_play" class="fa fa-fw fa-pause"></--i -->
+    </div>
+    <div id="progress-bar-panel" class="container center" style="display: none;">
+        <div class="progress">
+            <div class="progress-bar progress-bar-bim progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">100%</div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="parameter-list-container" class="col-xs-3">
+            <h1>Options</h1>
+            <hr>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-group form-group-sm">
+                        <label class="control-label" for="6c78c43b-2c8f-45c2-a3d2-154e09b58b6f">OBJECT</label>
+                        <select id="select_object" class="form-control" data-previous-mul="1">
+                            <option value="DAE/krzeslo.dae">EFG Woods</option>
+                            <option value="DAE/Top-Line120LED.dae">Top-Line120LED</option>
+                            <option value="DAE/stolik.dae">LOCUS - Round Table D1200</option>
+                            <option value="DAE/kran.dae">ARENA Single-lever</option>
+                            <option value="DAE/807_SlimConferenceChair.dae">807_SlimConferenceChair</option>
+                            <option value="DAE/LineaLight_COB20_R2.dae">LineaLight_COB20_R2</option>
+                            <option value="DAE/Ceraplan-Washbasin.dae">Ceraplan-Washbasin</option>
+                        </select>
+                    </div>
+                </div> 
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-group form-group-sm">
+                        <label class="control-label" for="208fe537-dffd-47f0-bf50-bbce53207d39">GRADIENT</label>
+                        <select id="select_gradient" class="form-control" data-previous-mul="2">
+                            <option value="gradient_copper.png">copper</option>
+                            <option value="gradient.png">white</option>
+                            <option value="gradient_blue.png">blue</option>
+                            <option value="gradient_green.png">green</option>
+                            <option value="gradient_lightblue.png">lightblue</option>
+                            <option value="gradient_purple.png">purple</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-group form-group-sm">
+                        <label class="control-label" for="87d9dc06-761c-4f4f-892e-ed67c1e1d47b">GRID</label>
+                        <select id="select_grid" class="form-control" data-previous-mul="4">
+
+                            <option value="textures/grids/grid128_1.png">ON1</option>
+                            <option value="textures/grids/grid128_2.png">ON2</option>
+                            <option value="textures/grids/grid128_3.png">ON3</option>
+                            <option value="textures/grids/grid128_4.png">ON4</option>
+                            <option value="textures/grids/grid128_5.png">ON5</option>
+                            <option value="textures/grids/grid128_6.png">ON6</option>
+                            <option value="textures/grids/grid128_7.png">ON7</option>
+                            <option value="textures/grids/grid128_8.png">ON8</option>
+                            <option value="off">OFF</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button id="refresh-button" class="btn btn-primary btn-sm btn-block"> Configure</button>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-group form-group-sm">
+                        <label class="control-label" for="87d9dc06-761c-4f4f-892e-ed67c1e1d47b">SELECT HDR</label>
+                        <select id="select_HDR" class="form-control" data-previous-mul="4">
+                            <option value="Sky1">OPTION_1</option>
+                            <option value="Sky2">OPTION_2</option>
+                            <option value="Sky3">OPTION_3</option>
+                            <option value="Sky4">OPTION_4</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button id="hdr-button" class="btn btn-primary btn-sm btn-block"> Change HDR</button>
+            <p><br></p>
+            <div class="poweredby">
+                <img src="./Powered_by_BIMobject.png" alt="Powered by BIMobject®">
+            </div>
+
+        </div>
+        <div id="webgl-container" class="col-xs-9 nopadding" style="display: block;"></div>
+
+    </div>
+
+    <div id="notsupported" style="display: none; text-align: center;"><h2>Your browser doesn't support WebGL</h2><h4>Please upgrade it or change to another browser</h4></div>
+
+
+    <script>
+
+        jQuery(document).ready(function () {
+
+            $('#refresh-button').click(function () {
+
+                loadDae($("#select_object").val(), $("#select_grid").val(),$("#select_gradient").val())
+            });
+
+            $('#hdr-button').click(function () {
+                changeHDR();
+                loadDae($("#select_object").val(), $("#select_grid").val(), $("#select_gradient").val());
+            });
+        });
+
+        /// FUNCTION TO INITIALIZE VIEW
+
+      /*var daePath = $("#select_object").val();
+        var gridURL = $("#select_grid").val();
+        var gradientname = $("#select_gradient").val();*/
+        //#webgl-container
+        var nameContainer = '#webgl-container';
+        var centerObject = new THREE.Object3D();
+        var jquery_container;
+        
+        var controls, camera, scene, renderer;
+        var cameraCube, sceneCube;
+        var textureCube;
+       
+        var size = new THREE.Vector3();
+        var box3 = new THREE.Box3();
+
+        var object;
+        var planeGrid;
+        var gradient;
+        var globalPlaneMesh;
+
+        var oLoa = false;
+        var gridLoa = false;
+        var gradientLod = false;
+        var globalPlaneLoa = false;
+        
+
+        initSceneRenderer();
+
+        function initSceneRenderer()
+        {
+            jquery_container = $(nameContainer);
+
+            var height = $(window).innerHeight() - 1;
+            var width = jquery_container.width() - 1;
+
+            // CAMERAS
+            camera = new THREE.PerspectiveCamera(70, width / height, 1, 1000);
+            camera.position.set(0, 0, 10);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            
+
+            // SCENE
+            scene = new THREE.Scene();
+
+            // SKYBOX
+            var r = "textures/Sky1/";
+            var urls = [r + "Mapki_RT.jpg", r + "Mapki_LF.jpg",
+            r + "Mapki_UP.jpg", r + "Mapki_DN.jpg",
+            r + "Mapki_BK.jpg", r + "Mapki_FR.jpg"];
+
+
+            textureCube = new THREE.CubeTextureLoader().load(urls);
+            textureCube.format = THREE.RGBFormat;
+            textureCube.mapping = THREE.CubeReflectionMapping;
+
+
+            //LIGHTS
+            var ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambient);
+          // MAIN LIGHT WITH SHADOW
+            var dirLight = new THREE.DirectionalLight(0xFFEFDB, 0.4);
+            dirLight.name = 'Dir. Light';
+            dirLight.position.set(500, 500, 500);
+        //   dirLight.castShadow = true;
+            dirLight.shadow.camera.near = 1;
+            dirLight.shadow.camera.far = 1000;
+            dirLight.shadow.camera.right = 300;
+            dirLight.shadow.camera.left = - 300;
+            dirLight.shadow.camera.top = 300;
+            dirLight.shadow.camera.bottom = - 152;
+            dirLight.shadow.mapSize.width = 1024 * 8;
+            dirLight.shadow.mapSize.height = 1024 * 8;
+            dirLight.target = centerObject;
+            scene.add(dirLight);
+ 
+            //HELP LIGHT1
+            var dirLight2 = new THREE.DirectionalLight(0xffbe98, 0.3);
+            dirLight2.name = 'Dir. Light';
+            dirLight2.position.set(-500, 500, -500);
+            dirLight2.target = centerObject;
+            scene.add(dirLight2);
+
+            //HELP LIGHT2
+            var dirLight3 = new THREE.DirectionalLight(0x91beff, 0.3);
+            dirLight3.name = 'Dir. Light';
+            dirLight3.position.set(-500, 500, 500);
+            dirLight3.target = centerObject;
+            scene.add(dirLight3);
+
+            //HELP LIGHT 4 DOWN
+            var dirLight4 = new THREE.PointLight(0xffffff, 0.4, 800);
+            dirLight4.name = 'Dir. Light';
+            dirLight4.position.set(0, -500, 100);
+            dirLight4.target = centerObject;
+            scene.add(dirLight4);
+             
+            //set renderer
+
+            renderer = new THREE.WebGLRenderer( );
+            renderer.setClearColor(0xffffff);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(width, height);
+            //  document.body.appendChild(renderer.domElement);
+            jquery_container.empty(); 
+            jquery_container.append(renderer.domElement);
+            renderer.autoClear = true;
+            renderer.shadowMapSoft = true;
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;  
+           //  renderer.setFaceCulling(THREE.CullFaceNone);
+            //ORBIT
+            controls = new THREE.OrbitControlsModified(camera, jquery_container.get(0));
+           // controls = new THREE.OrbitControls(camera, jquery_container.get(0)); 
+            animate();
+            loadDae();
+        }
+
+        // animate();
+     //   init();
+ 
+         
+        function loadDae(daePath = 'DAE/krzeslo.dae', gridURL = 'textures/grids/grid128_1.png', gradientname ='gradient_blue.png')
+        {
+            if (oLoa == true)
+            {
+              dispose(object);
+                oLoa = false;
+            }
+
+            var loader = new THREE.ColladaLoader();
+            loader.options.convertUpAxis = true;
+            loader.load(daePath, function (collada) {
+
+                object = collada.scene;
+                // set material two sided and apply HDR TO MATERIAL
+                object.traverse(function (o) {
+                    if (o.material) {
+                        o.material.side = THREE.DoubleSide;
+                        o.material.envMap = textureCube;
+                      
+                         o.castShadow = true;
+                        o.receiveShadow = true;
+                        
+                    }
+                });
+                scene.add(object);
+               
+                oLoa = true;
+                // initialization of object size and camera position.
+                initSettings(gridURL, gradientname);
+
+            });
+        }
+
+        function dispose(obj) {
+            
+            obj.traverse(function (o) {
+                if (o.geometry != null) {
+                    o.geometry.dispose();
+                    o.geometry = null;
+                }
+                if (o.material) {
+                  /*  if (o.material.map) {
+                        o.material.map.dispose();
+                        o.material.map = null;
+                    }*/
+                 //   o.material.dispose();
+                    o.material = null;
+                }
+                scene.remove(o);
+
+                o = null;
+            });
+        }
+ 
+  
+        function initSettings(gridURL, gradientname) {
+         //   controls.reset();
+
+            var boxHelp = new THREE.BoxHelper(object, 0xFF0000)
+            boxHelp.update();
+            box3.setFromObject(boxHelp); // or from mesh, same answer
+            box3.getSize(size); // pass in size so a new Vector3 is not allocated
+            var max = Math.max(box3.getSize(size).x, box3.getSize(size).y);
+            // scene.add(boxHelp);
+            //SET CAMERA POSITION
+            var z10 = box3.getSize(size).z * 0.1;
+            camera.position.set(box3.getSize(size).x, box3.getSize(size).y / 2, box3.getSize(size).z + z10);
+            object.position.y -= box3.getSize(size).y / 2;
+            boxHelp.update();
+            box3.setFromObject(boxHelp);
+
+            if (globalPlaneLoa == true) {
+                dispose(globalPlaneMesh);
+                globalPlaneLoa = false;
+            }
+            //GLOBAL PLANE
+            var globalPlane = new THREE.PlaneGeometry(max * 5, max * 5);
+            var materialglobalPlane = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0, shininess: 0, reflectivity: 0 });
+            globalPlaneMesh = new THREE.Mesh(globalPlane, materialglobalPlane);
+            degr = (-90 * Math.PI) / 180;
+            globalPlaneMesh.rotateX(degr);
+            globalPlaneMesh.position.y = box3.min.y - 0.017;
+            globalPlaneMesh.receiveShadow = true;
+            scene.add(globalPlaneMesh);
+            globalPlaneLoa = true;
+
+            //TEX Loader
+            var TextureLoader = new THREE.TextureLoader();
+
+            //GRID PLANE
+            if (gridLoa == true) {
+                dispose(planeGrid);
+                gridLoa = false;
+            }
+
+            TextureLoader.load(gridURL, function (texture) {
+                // do something with the texture
+                var geometryPlane = new THREE.PlaneGeometry(max * 2, max * 2);
+                var materialPlane = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0, shininess: 0, reflectivity: 0 });
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                // GRID
+                texture.repeat.set(15, 15);
+                materialPlane.map = texture;
+                planeGrid = new THREE.Mesh(geometryPlane, materialPlane);
+                //#radians
+                degr = (-90 * Math.PI) / 180;
+                planeGrid.rotateX(degr);
+                planeGrid.position.y = box3.min.y - 0.015;
+                planeGrid.receiveShadow = true;
+                scene.add(planeGrid);
+                gridLoa = true;
+            },
+                // Function called when download progresses
+                function (xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                // Function called when download errors
+                function (xhr) {
+                    console.log('An error happened');
+                }
+            );
+
+            if (gradientLod == true) {
+                dispose(gradient);
+                gradientLod = false;
+            }
+
+            TextureLoader.load('textures/gradients/' + gradientname, function (texture) {
+                // do something with the texture
+
+                var geometryPlaneGradient = new THREE.PlaneGeometry(max * 2.5, max * 2.5);
+                var materialPlaneT = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0, shininess: 0, reflectivity: 0, transparent: true });
+
+                materialPlaneT.map = texture;
+                gradient = new THREE.Mesh(geometryPlaneGradient, materialPlaneT);
+                //#radians
+                degr = (-90 * Math.PI) / 180;
+                gradient.rotateX(degr);
+                gradient.position.y = box3.min.y - 0.014;
+                gradient.receiveShadow = true;
+                //gradient.renderOrder = 2;
+                scene.add(gradient);
+                gradientLod = true;
+            },
+                // Function called when download progresses
+                function (xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                // Function called when download errors
+                function (xhr) {
+                    console.log('An error happened');
+                }
+            );
+
+            //ORBIT
+            controls.update();
+        }
+
+        window.onresize = function (event) {
+            var height = $(window).innerHeight() - 1;
+            var width = jquery_container.width() - 1;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if ((camera instanceof THREE.PerspectiveCamera) && (scene instanceof THREE.Scene))
+                renderer.render(scene, camera);
+        }
+
+        function remove() {
+
+            scene.traverse(function (obje) {
+
+                obje.traverse(function (o) {
+
+                    if (o.geometry) o.geometry.dispose();
+                    if (o.material) {
+                        if (o.material.map) o.material.map.dispose();
+                        o.material.dispose();
+                    }
+                    scene.remove(o);
+                });
+            });
+        }
+            function changeHDR() {
+                var hdr = $("#select_HDR").val();
+                var r = "textures/" + hdr+"/";
+                var urls = [r + "Mapki_RT.jpg", r + "Mapki_LF.jpg",
+                r + "Mapki_UP.jpg", r + "Mapki_DN.jpg",
+                r + "Mapki_BK.jpg", r + "Mapki_FR.jpg"];
+
+
+                textureCube = new THREE.CubeTextureLoader().load(urls);
+                textureCube.format = THREE.RGBFormat;
+                textureCube.mapping = THREE.CubeReflectionMapping;
+                console.log("HDR changed");
+                 }
+    </script>
+
+</body>
+</html>
