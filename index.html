@@ -229,6 +229,7 @@
     <div id="notsupported" style="display: none; text-align: center;"><h2>Your browser doesn't support WebGL</h2><h4>Please upgrade it or change to another browser</h4></div>
 
 
+     
     <script>
 
         jQuery(document).ready(function () {
@@ -310,9 +311,9 @@
             var dirLight = new THREE.DirectionalLight(0xFFEFDB, 0.4);
             dirLight.name = 'Dir. Light';
             dirLight.position.set(500, 500, 500);
-        //   dirLight.castShadow = true;
+            dirLight.castShadow = true;
             dirLight.shadow.camera.near = 1;
-            dirLight.shadow.camera.far = 1000;
+            dirLight.shadow.camera.far = 2000;
             dirLight.shadow.camera.right = 300;
             dirLight.shadow.camera.left = - 300;
             dirLight.shadow.camera.top = 300;
@@ -325,41 +326,41 @@
             //HELP LIGHT1
             var dirLight2 = new THREE.DirectionalLight(0xffbe98, 0.3);
             dirLight2.name = 'Dir. Light';
-            dirLight2.position.set(-500, 500, -500);
+            dirLight2.position.set(-1500, 1500, -1500);
             dirLight2.target = centerObject;
             scene.add(dirLight2);
 
             //HELP LIGHT2
             var dirLight3 = new THREE.DirectionalLight(0x91beff, 0.3);
             dirLight3.name = 'Dir. Light';
-            dirLight3.position.set(-500, 500, 500);
+            dirLight3.position.set(-1500, 1500, 1500);
             dirLight3.target = centerObject;
             scene.add(dirLight3);
 
             //HELP LIGHT 4 DOWN
             var dirLight4 = new THREE.PointLight(0xffffff, 0.4, 800);
             dirLight4.name = 'Dir. Light';
-            dirLight4.position.set(0, -500, 100);
+            dirLight4.position.set(0, -1500, 1000);
             dirLight4.target = centerObject;
             scene.add(dirLight4);
              
             //set renderer
 
-            renderer = new THREE.WebGLRenderer( );
+            renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setClearColor(0xffffff);
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(width, height);
             //  document.body.appendChild(renderer.domElement);
-            jquery_container.empty(); 
+            jquery_container.empty();
             jquery_container.append(renderer.domElement);
             renderer.autoClear = true;
             renderer.shadowMapSoft = true;
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;  
-           //  renderer.setFaceCulling(THREE.CullFaceNone);
+            //  renderer.setFaceCulling(THREE.CullFaceNone);
             //ORBIT
             controls = new THREE.OrbitControlsModified(camera, jquery_container.get(0));
-           // controls = new THREE.OrbitControls(camera, jquery_container.get(0)); 
+                  
             animate();
             loadDae();
         }
@@ -372,7 +373,7 @@
         {
             if (oLoa == true)
             {
-              dispose(object);
+                dispose(object);
                 oLoa = false;
             }
 
@@ -386,10 +387,8 @@
                     if (o.material) {
                         o.material.side = THREE.DoubleSide;
                         o.material.envMap = textureCube;
-                      
-                         o.castShadow = true;
+                        o.castShadow = true;
                         o.receiveShadow = true;
-                        
                     }
                 });
                 scene.add(object);
@@ -402,18 +401,43 @@
         }
 
         function dispose(obj) {
-            
+            scene.remove(obj);
+
             obj.traverse(function (o) {
-                if (o.geometry != null) {
+
+                if (o.material) {
+                    if (o.material.map) o.material.map.dispose();
+                    if (o.material.lightMap) o.material.lightMap.dispose();
+                    if (o.material.bumpMap) o.material.bumpMap.dispose();
+                    if (o.material.normalMap) o.material.normalMap.dispose();
+                    if (o.material.specularMap) o.material.specularMap.dispose();
+                    if (o.material.envMap) o.material.envMap.dispose();
+
+                    o.material.dispose();   // disposes any programs associated with the material
+                    o.material = null;
+                }
+
+                if (o.geometry) {
+                    o.geometry.dispose();
+                    o.geometry = null;
+                }
+                o = null;
+            });
+        }
+        /*
+        function dispose(obj)
+        {
+            obj.traverse(function (o) {
+                if (o.geometry) {
                     o.geometry.dispose();
                     o.geometry = null;
                 }
                 if (o.material) {
-                  /*  if (o.material.map) {
+                    if (o.material.map) {
                         o.material.map.dispose();
                         o.material.map = null;
-                    }*/
-                 //   o.material.dispose();
+                    }
+                    o.material.dispose();
                     o.material = null;
                 }
                 scene.remove(o);
@@ -421,10 +445,10 @@
                 o = null;
             });
         }
- 
+ */
   
         function initSettings(gridURL, gradientname) {
-         //   controls.reset();
+            controls.reset();
 
             var boxHelp = new THREE.BoxHelper(object, 0xFF0000)
             boxHelp.update();
@@ -522,11 +546,11 @@
                     console.log('An error happened');
                 }
             );
-
+            TextureLoader = null;
             //ORBIT
             controls.update();
         }
-
+        //Resize Renderer after window manipulation
         window.onresize = function (event) {
             var height = $(window).innerHeight() - 1;
             var width = jquery_container.width() - 1;
@@ -540,22 +564,7 @@
             if ((camera instanceof THREE.PerspectiveCamera) && (scene instanceof THREE.Scene))
                 renderer.render(scene, camera);
         }
-
-        function remove() {
-
-            scene.traverse(function (obje) {
-
-                obje.traverse(function (o) {
-
-                    if (o.geometry) o.geometry.dispose();
-                    if (o.material) {
-                        if (o.material.map) o.material.map.dispose();
-                        o.material.dispose();
-                    }
-                    scene.remove(o);
-                });
-            });
-        }
+ 
             function changeHDR() {
                 var hdr = $("#select_HDR").val();
                 var r = "textures/" + hdr+"/";
@@ -570,6 +579,8 @@
                 console.log("HDR changed");
                  }
     </script>
+
+
 
 </body>
 </html>

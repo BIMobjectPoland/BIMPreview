@@ -432,7 +432,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		//console.log( 'handleMouseDownPan' );
 
-		panStart.set( event.clientX, event.clientY );
+	 	panStart.set( event.clientX, event.clientY );
 
 	}
 
