@@ -162,6 +162,15 @@
                             <option value="DAE/807_SlimConferenceChair.dae">807_SlimConferenceChair</option>
                             <option value="DAE/LineaLight_COB20_R2.dae">LineaLight_COB20_R2</option>
                             <option value="DAE/Ceraplan-Washbasin.dae">Ceraplan-Washbasin</option>
+
+                            <option value="DAE/stolik.dae">stolik</option>
+                            <option value="DAE/WirelessTouch.dae">WirelessTouch</option>
+                            <option value="DAE/lampaaaa.dae">lampaaaa</option>
+                            <option value="DAE/umywalkaprzesunieta.dae">umywalkaprzesunieta</option>
+                            <option value="DAE/skrzynka.dae">skrzynka</option>
+                            <option value="DAE/krzesloprzesuniete.dae">krzesloprzesuniete</option>
+                            <option value="DAE/kran.dae">ARENA Single-lever</option>
+
                         </select>
                     </div>
                 </div> 
@@ -284,7 +293,7 @@
             var width = jquery_container.width() - 1;
 
             // CAMERAS
-            camera = new THREE.PerspectiveCamera(70, width / height, 1, 1000);
+            camera = new THREE.PerspectiveCamera(70, width / height, 0.1, 1000);
             camera.position.set(0, 0, 10);
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
@@ -358,7 +367,8 @@
             renderer.shadowMapSoft = true;
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;  
-            //  renderer.setFaceCulling(THREE.CullFaceNone);
+           // renderer.shadowMapCullFace = THREE.CullFaceBack;
+            renderer.shadowMap.renderReverseSided = false;
             //ORBIT
             controls = new THREE.OrbitControlsModified(camera, jquery_container.get(0));
                   
@@ -386,8 +396,8 @@
                     if (o.material) {
                         o.material.side = THREE.DoubleSide;
                         o.material.envMap = textureCube;
-                        o.castShadow = true;
-                        o.receiveShadow = true;
+                     o.castShadow = true;
+                     o.receiveShadow = false;
                     }
                 });
                 scene.add(object);
@@ -458,7 +468,20 @@
             //SET CAMERA POSITION
             var z10 = box3.getSize(size).z * 0.1;
             camera.position.set(box3.getSize(size).x, box3.getSize(size).y / 2, box3.getSize(size).z + z10);
-            object.position.y -= box3.getSize(size).y / 2;
+            controls.update();
+          
+            object.position.x -= box3.getCenter().x;
+            object.position.y -= box3.getCenter().y;
+            object.position.z -= box3.getCenter().z;
+
+            if (box3.getSize(size).x < 0.2 || box3.getSize(size).y < 0.2 || box3.getSize(size).z < 0.2) {
+                camera.near = 0.01;
+            }
+            else {
+                camera.near = 0.1;
+            }
+            camera.updateProjectionMatrix();
+
             boxHelp.update();
             box3.setFromObject(boxHelp);
 
